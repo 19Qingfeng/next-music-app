@@ -25,3 +25,8 @@
     bottom: -10px;
   }
 }
+
+// 使用阴影
+@mixin use-shadow($color) {
+  box-shadow: 0 0.5rem 1rem $color !important;
+}
