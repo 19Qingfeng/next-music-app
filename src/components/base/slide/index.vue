@@ -1,6 +1,6 @@
 <template>
   <div class="slide">
-    <div class="slide-group">
+    <div class="slide-group" ref="slideRef">
       <div class="slide-page" v-for="item in sliders" :key="item.id">
         <a :href="item.link">
           <img :src="item.pic" />
@@ -18,6 +18,8 @@
   </div>
 </template>
 <script>
+import { ref } from '@vue/reactivity'
+import useSlide from './use-slide'
 export default {
   name: 'Slide',
   props: {
@@ -26,7 +28,14 @@ export default {
       default: () => []
     }
   },
-  setup () { }
+  setup () {
+    const slideRef = ref(null)
+    const { currentPageIndex } = useSlide(slideRef)
+    return {
+      slideRef,
+      currentPageIndex
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
