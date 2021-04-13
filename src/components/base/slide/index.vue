@@ -77,7 +77,7 @@ export default {
       &.active {
         width: 20px;
         border-radius: 5px;
-        backgroud: $color-text-ll;
+        background: $color-text-ll;
       }
     }
   }

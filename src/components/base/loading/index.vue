@@ -13,17 +13,27 @@ export default {
   name: 'Loading',
   data () {
     return {
-      title: ''
+      title: '正在加载...'
+    }
+  },
+  methods: {
+    setTitle (title) {
+      console.log('调用了 更新呀', title)
+      this.title = title
     }
   }
 }
 </script>
 <style lang="scss" scoped>
 .loading {
-  position: absolute;
+  position: absolute; // 块级元素宽度由于定位并非默认100%，默认是由子元素内容宽度决定。
   top: 50%;
   left: 50%;
-  transform: translate3d(-50%, -50%, 0); // 百分比表示当前对象的尺寸
+  transform: translate3d(
+    -50%,
+    -50%,
+    0
+  ); // 百分比表示当前对象的尺寸,而非相对于父容器。
   .loading-content {
     text-align: center;
     .desc {

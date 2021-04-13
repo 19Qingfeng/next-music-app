@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" v-loading:[loadingText]="loading">
     <scroll class="recommend-scroll">
       <div>
         <div class="slide-wrapper">
@@ -12,7 +12,7 @@
           <ul>
             <li v-for="item in albums" :key="item.id" class="item">
               <div class="icon">
-                <img width='60' height="60" v-lazy="item.pic" >
+                <img width="60" height="60" v-lazy="item.pic" />
               </div>
               <div class="text">
                 <h2 class="name">{{ item.username }}</h2>
@@ -36,8 +36,14 @@ export default {
     Slide,
     Scroll
   },
+  computed: {
+    loading () {
+      return !this.sliders.length && !this.albums.length
+    }
+  },
   data () {
     return {
+      loadingText: '热门在拼命赶来的路上～',
       sliders: [],
       albums: []
     }
