@@ -4,7 +4,7 @@ import { onMounted, onUnmounted } from '@vue/runtime-core'
 
 BScroll.use(ObserveDOM)
 
-export default function useScroll (wrapperRef, option) {
+export default function useScroll (wrapperRef, option, ctx) {
   let bs
   onMounted(() => {
     // bs 判断能否滚动是在初始化时候根据容器和内容高度进行判别
@@ -13,6 +13,11 @@ export default function useScroll (wrapperRef, option) {
       observeDOM: true, // 开启 observe-dom 插件
       ...option
     })
+    if (option.probeType > 0) {
+      bs.on('scroll', position => {
+        ctx.emit('onScroll', position)
+      })
+    }
   })
   onUnmounted(() => {
     bs.destroy()
