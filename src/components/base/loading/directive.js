@@ -4,11 +4,10 @@ import { createApp } from 'vue'
 
 const reactiveClass = 'g-reactive'
 
-const instance = createApp(Loading).mount(document.createElement('div'))
-
 const directive = {
   mounted (el, binding) {
-    el.instance = instance.$el
+    const instance = createApp(Loading).mount(document.createElement('div'))
+    el.instance = instance
     const title = binding.arg
     if (typeof title !== 'undefined') {
       instance.setTitle(title)
@@ -18,10 +17,10 @@ const directive = {
     }
   },
   updated (el, binding) {
-    const dom = el.instance
+    const dom = el.instance.$el
     const title = binding.arg
     if (typeof title !== 'undefined') {
-      instance.setTitle(title)
+      el.instance.setTitle(title)
     }
     if (binding.value !== binding.oldValue) {
       binding.value ? append(el, dom) : remove(el, dom)
