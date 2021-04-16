@@ -76,6 +76,7 @@ export default function useFixed (props) {
     rootRef,
     fixedTitle,
     transformStyle,
+    currentIndex,
     onScroll
   }
 }

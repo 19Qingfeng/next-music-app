@@ -1,5 +1,10 @@
 <template>
-  <scroll class="index-list" @onScroll="onScroll" :probeType="3">
+  <scroll
+    ref="scrollWrapper"
+    class="index-list"
+    @onScroll="onScroll"
+    :probeType="3"
+  >
     <ul ref="rootRef">
       <li v-for="group in data" :key="group.title" class="group">
         <h2 class="title">
@@ -16,12 +21,30 @@
     <div class="fixed" v-show="fixedTitle">
       <div class="fixed-title" :style="transformStyle">{{ fixedTitle }}</div>
     </div>
+    <div class="shortcut">
+      <ul>
+        <li
+          class="item"
+          v-for="(item, index) in shortTitle"
+          :key="item"
+          :class="{ current: currentIndex === index }"
+          :data-index="index"
+          @touchstart.prevent.stop="onTouchStart"
+          @touchmove.prevent.stop="onTouchMove"
+          @touchend.prevent.stop="onTouchEnd"
+        >
+          {{ item }}
+        </li>
+      </ul>
+    </div>
   </scroll>
 </template>
 
 <script>
 import Scroll from '../base/scroll/index.vue'
 import useFixed from './use-fixed'
+import useShortcur from './use-shortcut'
+import { ref } from 'vue'
 export default {
   name: 'IndexList',
   components: {
@@ -34,12 +57,20 @@ export default {
     }
   },
   setup (props) {
-    const { rootRef, fixedTitle, onScroll, transformStyle } = useFixed(props)
+    const scrollWrapper = ref(null)
+    const { rootRef, fixedTitle, currentIndex, onScroll, transformStyle } = useFixed(props)
+    const { shortTitle, onTouchStart, onTouchMove, onTouchEnd } = useShortcur(props, scrollWrapper, rootRef)
     return {
       rootRef,
       fixedTitle,
+      shortTitle,
+      currentIndex,
       onScroll,
-      transformStyle
+      onTouchStart,
+      onTouchMove,
+      onTouchEnd,
+      transformStyle,
+      scrollWrapper
     }
   }
 }

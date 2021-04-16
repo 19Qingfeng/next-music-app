@@ -22,9 +22,10 @@ export default {
   emits: ['onScroll'],
   setup (props, ctx) {
     const rootRef = ref(null)
-    useScroll(rootRef, props, ctx)
+    const { bs } = useScroll(rootRef, props, ctx)
     return {
-      rootRef
+      rootRef,
+      bs
     }
   }
 }
