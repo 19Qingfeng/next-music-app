@@ -21,7 +21,12 @@
     <div class="fixed" v-show="fixedTitle">
       <div class="fixed-title" :style="transformStyle">{{ fixedTitle }}</div>
     </div>
-    <div class="shortcut">
+    <div
+      class="shortcut"
+      @touchstart.prevent.stop="onTouchStart"
+      @touchmove.stop.prevent="onTouchMove"
+      @touchend.prevent.stop
+    >
       <ul>
         <li
           class="item"
@@ -29,9 +34,6 @@
           :key="item"
           :class="{ current: currentIndex === index }"
           :data-index="index"
-          @touchstart.prevent.stop="onTouchStart"
-          @touchmove.prevent.stop="onTouchMove"
-          @touchend.prevent.stop="onTouchEnd"
         >
           {{ item }}
         </li>
@@ -59,7 +61,7 @@ export default {
   setup (props) {
     const scrollWrapper = ref(null)
     const { rootRef, fixedTitle, currentIndex, onScroll, transformStyle } = useFixed(props)
-    const { shortTitle, onTouchStart, onTouchMove, onTouchEnd } = useShortcur(props, scrollWrapper, rootRef)
+    const { shortTitle, onTouchStart, onTouchMove } = useShortcur(props, scrollWrapper, rootRef)
     return {
       rootRef,
       fixedTitle,
@@ -68,7 +70,6 @@ export default {
       onScroll,
       onTouchStart,
       onTouchMove,
-      onTouchEnd,
       transformStyle,
       scrollWrapper
     }
