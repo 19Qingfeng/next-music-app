@@ -1,6 +1,7 @@
 <template>
   <div class="singer" v-loading:[loadingText]="!singers.length">
-    <index-list :data="singers" />
+    <index-list :data="singers" @selected="selectedSinger" />
+    <router-view :singer="singer"></router-view>
   </div>
 </template>
 
@@ -14,7 +15,16 @@ export default {
   data () {
     return {
       singers: [],
+      singer: null,
       loadingText: '歌手在跑来的路上'
+    }
+  },
+  methods: {
+    selectedSinger (singer) {
+      this.singer = singer
+      this.$router.push({
+        path: `/singer/${singer.mid}`
+      })
     }
   },
   async created () {

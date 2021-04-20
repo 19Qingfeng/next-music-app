@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Recommend from '@/views/recommend.vue'
 import Singer from '@/views/singer.vue'
+import SingerDetail from '@/views/singer-detail.vue'
 import TopList from '@/views/top-list.vue'
 import Search from '@/views/search.vue'
 
@@ -17,7 +18,14 @@ const routes = [
   {
     path: '/singer',
     name: 'Singer',
-    component: Singer
+    component: Singer,
+    children: [
+      {
+        name: 'SingerDetail',
+        component: SingerDetail,
+        path: ':id'
+      }
+    ]
   },
   {
     path: '/top-list',

@@ -2,8 +2,8 @@
   <scroll
     ref="scrollWrapper"
     class="index-list"
-    @onScroll="onScroll"
     :probeType="3"
+    @onScroll="onScroll"
   >
     <ul ref="rootRef">
       <li v-for="group in data" :key="group.title" class="group">
@@ -11,7 +11,12 @@
           {{ group.title }}
         </h2>
         <ul>
-          <li v-for="item in group.list" :key="item.id" class="item">
+          <li
+            v-for="item in group.list"
+            :key="item.id"
+            class="item"
+            @click="onItemClick(item)"
+          >
             <img class="avatar" v-lazy="item.pic" />
             <span class="name">{{ item.name }}</span>
           </li>
@@ -58,10 +63,14 @@ export default {
       default: () => []
     }
   },
-  setup (props) {
+  emits: ['selected'],
+  setup (props, { emit }) {
     const scrollWrapper = ref(null)
     const { rootRef, fixedTitle, currentIndex, onScroll, transformStyle } = useFixed(props)
     const { shortTitle, onTouchStart, onTouchMove } = useShortcur(props, scrollWrapper, rootRef)
+    const onItemClick = (item) => {
+      emit('selected', item)
+    }
     return {
       rootRef,
       fixedTitle,
@@ -70,6 +79,7 @@ export default {
       onScroll,
       onTouchStart,
       onTouchMove,
+      onItemClick,
       transformStyle,
       scrollWrapper
     }

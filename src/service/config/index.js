@@ -1,16 +1,16 @@
 import axios from 'axios'
 
-const ERROR_COODE = 0
+const ERROR_CODE = 0
 const baseURL = '/'
 
 axios.defaults.baseURL = baseURL
 
 export const get = (url, params) => {
   return axios
-    .get(url, params)
+    .get(url, { params })
     .then(res => {
       const serviceData = res.data
-      if (serviceData.code === ERROR_COODE) {
+      if (serviceData.code === ERROR_CODE) {
         return serviceData.result
       }
     })
