@@ -1,11 +1,12 @@
 <template>
   <div class="singer-detail">
-    {{singer}}
+    <music-list :songs="songs" :pic="pic" :title="name" :loading="loading" />
   </div>
 </template>
 
 <script>
 import { getSingerDetail } from '../service/singer'
+import MusicList from '../components/music-list'
 export default {
   name: 'sing-detail',
   props: {
@@ -13,9 +14,28 @@ export default {
       type: Object
     }
   },
+  data () {
+    return {
+      songs: [],
+      loading: false
+    }
+  },
+  computed: {
+    pic () {
+      return this.singer && this.singer.pic
+    },
+    name () {
+      return this.singer && this.singer.name
+    }
+  },
+  components: {
+    MusicList
+  },
   async created () {
-    const result = await getSingerDetail(this.singer)
-    console.log(result)
+    this.loading = true
+    const { songs } = await getSingerDetail(this.singer)
+    this.loading = false
+    this.songs = songs
   }
 }
 
@@ -29,5 +49,11 @@ export default {
   bottom: 0;
   right: 0;
   background-color: $color-background;
+  .bg-img {
+    position: relative;
+    width: 100%;
+    transform-origin: top;
+    background-size: cover;
+  }
 }
 </style>
