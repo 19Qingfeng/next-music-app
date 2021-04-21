@@ -58,16 +58,25 @@ export default {
       let zIndex = 0
       let paddingTop = '70%'
       let height = 0
+      let translateZ = 0
       if (scrollY > this.maxTranslateY) {
         zIndex = 10
         paddingTop = 0
         height = RESERVED_HEIGHT + 'px'
+        translateZ = 1 // 解决移动端IOS兼容Zindex问题
       }
+
+      let scale = 1
+      if (scrollY < 0) {
+        scale = 1 + Math.abs(scrollY / this.imageHeight)
+      }
+
       return {
         'background-image': `url(${this.pic})`,
         'z-index': zIndex,
         paddingTop,
-        height
+        height,
+        transform: `scale(${scale})translateZ(${translateZ}px)`
       }
     },
     srollStyle () {
