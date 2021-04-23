@@ -7,6 +7,8 @@
 <script>
 import { getSingerDetail } from '../service/singer'
 import MusicList from '../components/music-list'
+import { SINGER_SESSION } from '@/assets/js/constant'
+import { session } from '../utils/index'
 export default {
   name: 'sing-detail',
   props: {
@@ -21,19 +23,39 @@ export default {
     }
   },
   computed: {
+    computedSinger () {
+      let ret = null
+      const singer = this.singer
+      if (singer) {
+        ret = singer
+      }
+      const sessionSinger = session.get(SINGER_SESSION)
+      if (sessionSinger.mid === this.$route.params.id) {
+        ret = sessionSinger
+      }
+      return ret
+    },
     pic () {
-      return this.singer && this.singer.pic
+      const singer = this.computedSinger
+      return singer && singer.pic
     },
     name () {
-      return this.singer && this.singer.name
+      const singer = this.computedSinger
+      return singer && singer.name
     }
   },
   components: {
     MusicList
   },
   async created () {
+    const computedSinger = this.computedSinger
+    if (!computedSinger) {
+      const path = this.$route.matched[0]
+      this.$router.push(path)
+      return
+    }
     this.loading = true
-    const { songs } = await getSingerDetail(this.singer)
+    const { songs } = await getSingerDetail(this.computedSinger)
     this.loading = false
     this.songs = songs
   }

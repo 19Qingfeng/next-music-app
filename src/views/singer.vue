@@ -8,6 +8,8 @@
 <script>
 import IndexList from '@/components/index-list/index.vue'
 import { getSingerList } from '../service/singer'
+import { SINGER_SESSION } from '@/assets/js/constant'
+import { session } from '../utils/index'
 export default {
   components: {
     IndexList
@@ -22,9 +24,13 @@ export default {
   methods: {
     selectedSinger (singer) {
       this.singer = singer
+      this.cacheSession(singer)
       this.$router.push({
         path: `/singer/${singer.mid}`
       })
+    },
+    cacheSession (singer) {
+      session.set(SINGER_SESSION, singer)
     }
   },
   async created () {
