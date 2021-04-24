@@ -11,6 +11,7 @@
       class="list"
       :style="srollStyle"
       v-loading:[loadingText]="loading"
+      v-empty:[emptyText]="isEmpty"
       :probeType="3"
       @onScroll="onScroll"
     >
@@ -38,6 +39,10 @@ export default {
     },
     loading: {
       type: Boolean
+    },
+    emptyText: {
+      type: String,
+      default: '这里什么都没有'
     }
   },
   data: function () {
@@ -53,6 +58,9 @@ export default {
     SongList
   },
   computed: {
+    isEmpty () {
+      return !this.loading && this.songs && this.songs.length === 0
+    },
     bgStyle () {
       const scrollY = this.scrollY
       let zIndex = 0

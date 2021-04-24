@@ -355,7 +355,6 @@ function registerSingerDetail (app) {
         const list = data.singerSongList.data.songList
         // 歌单详情、榜单详情接口都有类似处理逻辑，固封装成函数
         const songList = handleSongList(list)
-
         res.json({
           code: ERR_OK,
           result: {
