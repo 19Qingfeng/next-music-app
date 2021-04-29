@@ -6,6 +6,7 @@
 
 <script>
 import { getSingerDetail } from '../service/singer'
+import { processSongs } from '../service/songs'
 import MusicList from '../components/music-list'
 import { SINGER_SESSION } from '@/assets/js/constant'
 import { session } from '../utils/index'
@@ -56,8 +57,8 @@ export default {
     }
     this.loading = true
     const { songs } = await getSingerDetail(this.computedSinger)
+    this.songs = await processSongs(songs)
     this.loading = false
-    this.songs = songs
   }
 }
 

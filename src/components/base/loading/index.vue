@@ -18,7 +18,6 @@ export default {
   },
   methods: {
     setTitle (title) {
-      console.log('调用了 更新呀', title)
       this.title = title
     }
   }
