@@ -7,7 +7,7 @@
 <script>
 import MHeader from '@/components/header/header.vue'
 import MTab from '@/components/tab/index.vue'
-import Player from '@/components/play/index.vue'
+import Player from '@/components/player/index.vue'
 export default {
   components: {
     MHeader,
