@@ -33,7 +33,7 @@
     </div>
     <audio
       ref="audioRef"
-      @pasue="pause"
+      @pause="pause"
       @canplay="canplay"
       @error="error"
     ></audio>
