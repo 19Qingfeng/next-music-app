@@ -17,13 +17,13 @@
             <i class="icon-sequence"></i>
           </div>
           <div class="icon i-left">
-            <i class="icon-prev"></i>
+            <i @click="preve" class="icon-prev"></i>
           </div>
           <div class="icon i-center">
             <i @click="togglePlay" :class="playIcon"></i>
           </div>
           <div class="icon i-right">
-            <i class="icon-next"></i>
+            <i @click="next" class="icon-next"></i>
           </div>
           <div class="icon i-right">
             <i class="icon-not-favorite"></i>
@@ -47,11 +47,17 @@ export default defineComponent({
     const currentSong = computed(() => {
       return store.getters.currentSong
     })
+    const currentIndex = computed(() => {
+      return store.state.currentIndex
+    })
     const fullScreen = computed(() => {
       return store.state.fullScreen
     })
     const playing = computed(() => {
       return store.state.playing
+    })
+    const palyList = computed(() => {
+      return store.state.playList
     })
 
     const playIcon = computed(() => {
@@ -80,8 +86,54 @@ export default defineComponent({
       store.commit('setPlayingState', false)
     }
 
+    const preve = () => {
+      const index = currentIndex.value
+      const list = palyList.value
+      if (list.length === 0) {
+        return
+      }
+      if (list.length === 1) {
+        loop()
+      } else {
+        let currentIndex = index - 1
+        if (currentIndex === -1) {
+          currentIndex = list.length - 1
+        }
+        store.commit('setCurrentIndex', currentIndex)
+        if (!playing.value) {
+          store.commit('setPlayingState', true)
+        }
+      }
+    }
+
+    const next = () => {
+      const index = currentIndex.value
+      const list = palyList.value
+      if (list.length === 0) {
+        return
+      }
+      if (list.length === 1) {
+        loop()
+      } else {
+        let currentIndex = index + 1
+        if (currentIndex === list.length) {
+          currentIndex = 0
+        }
+        store.commit('setCurrentIndex', currentIndex)
+        if (!playing.value) {
+          store.commit('setPlayingState', true)
+        }
+      }
+    }
+
     const goBack = () => {
       store.commit('setFullScreen', false)
+    }
+
+    function loop () {
+      const audio = audioRef.value
+      audio.currentTime = 0
+      audio.play()
     }
     return {
       currentSong,
@@ -90,6 +142,8 @@ export default defineComponent({
       playIcon,
       togglePlay,
       pause,
+      preve,
+      next,
       goBack
     }
   }
