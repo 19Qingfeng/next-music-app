@@ -16,13 +16,13 @@
           <div class="icon i-left">
             <i class="icon-sequence"></i>
           </div>
-          <div class="icon i-left">
+          <div class="icon i-left" :class="disableCls">
             <i @click="preve" class="icon-prev"></i>
           </div>
-          <div class="icon i-center">
+          <div class="icon i-center" :class="disableCls">
             <i @click="togglePlay" :class="playIcon"></i>
           </div>
-          <div class="icon i-right">
+          <div class="icon i-right" :class="disableCls">
             <i @click="next" class="icon-next"></i>
           </div>
           <div class="icon i-right">
@@ -31,7 +31,12 @@
         </div>
       </div>
     </div>
-    <audio ref="audioRef" @pasue="pause"></audio>
+    <audio
+      ref="audioRef"
+      @pasue="pause"
+      @canplay="canplay"
+      @error="error"
+    ></audio>
   </div>
 </template>
 
@@ -44,6 +49,8 @@ export default defineComponent({
   setup () {
     const store = useStore()
     const audioRef = ref(null)
+    const songReady = ref(false)
+
     const currentSong = computed(() => {
       return store.getters.currentSong
     })
@@ -63,9 +70,15 @@ export default defineComponent({
     const playIcon = computed(() => {
       return playing.value ? 'icon-pause' : 'icon-play'
     })
+    const disableCls = computed(() => {
+      return songReady.value ? '' : 'disable'
+    })
 
     watch(playing, (val) => {
       const audio = audioRef.value
+      if (!songReady.value) {
+        return
+      }
       val ? audio.play() : audio.pause()
     })
 
@@ -73,12 +86,16 @@ export default defineComponent({
       if (!newSong.id || !newSong.url) {
         return
       }
+      songReady.value = false
       const audio = audioRef.value
       audio.src = newSong.url
       audio.play()
     })
 
     const togglePlay = () => {
+      if (!songReady.value) {
+        return
+      }
       store.commit('setPlayingState', !playing.value)
     }
 
@@ -89,7 +106,7 @@ export default defineComponent({
     const preve = () => {
       const index = currentIndex.value
       const list = palyList.value
-      if (list.length === 0) {
+      if (list.length === 0 || !songReady.value) {
         return
       }
       if (list.length === 1) {
@@ -109,7 +126,7 @@ export default defineComponent({
     const next = () => {
       const index = currentIndex.value
       const list = palyList.value
-      if (list.length === 0) {
+      if (list.length === 0 || !songReady.value) {
         return
       }
       if (list.length === 1) {
@@ -126,6 +143,17 @@ export default defineComponent({
       }
     }
 
+    const canplay = () => {
+      if (songReady.value) {
+        return
+      }
+      songReady.value = true
+    }
+
+    const error = () => {
+      songReady.value = true
+    }
+
     const goBack = () => {
       store.commit('setFullScreen', false)
     }
@@ -140,10 +168,13 @@ export default defineComponent({
       fullScreen,
       audioRef,
       playIcon,
+      disableCls,
       togglePlay,
       pause,
       preve,
       next,
+      canplay,
+      error,
       goBack
     }
   }
