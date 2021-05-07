@@ -14,7 +14,7 @@
       <div class="bottom">
         <div class="operators">
           <div class="icon i-left">
-            <i class="icon-sequence"></i>
+            <i @click="changeMode" :class="modeIcon"></i>
           </div>
           <div class="icon i-left" :class="disableCls">
             <i @click="preve" class="icon-prev"></i>
@@ -43,6 +43,7 @@
 <script lang='ts'>
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useStore } from 'vuex'
+import useModel from './use-mode'
 
 export default defineComponent({
   name: 'Player',
@@ -51,6 +52,7 @@ export default defineComponent({
     const audioRef = ref(null)
     const songReady = ref(false)
 
+    // vuex
     const currentSong = computed(() => {
       return store.getters.currentSong
     })
@@ -67,6 +69,7 @@ export default defineComponent({
       return store.state.playList
     })
 
+    // computed
     const playIcon = computed(() => {
       return playing.value ? 'icon-pause' : 'icon-play'
     })
@@ -74,6 +77,10 @@ export default defineComponent({
       return songReady.value ? '' : 'disable'
     })
 
+    // hooks
+    const { modeIcon, changeMode } = useModel()
+
+    // watch
     watch(playing, (val) => {
       const audio = audioRef.value
       if (!songReady.value) {
@@ -92,6 +99,7 @@ export default defineComponent({
       audio.play()
     })
 
+    // methods
     const togglePlay = () => {
       if (!songReady.value) {
         return
@@ -175,7 +183,10 @@ export default defineComponent({
       next,
       canplay,
       error,
-      goBack
+      goBack,
+      // mode
+      modeIcon,
+      changeMode
     }
   }
 })

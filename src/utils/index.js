@@ -1,5 +1,4 @@
 import { Storage } from 'wind-library'
-
 const session = Storage.session
 
 function shuffle (source) {
