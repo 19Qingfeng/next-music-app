@@ -26,7 +26,10 @@
             <i @click="next" class="icon-next"></i>
           </div>
           <div class="icon i-right">
-            <i class="icon-not-favorite"></i>
+            <i
+              :class="getFavorite(currentSong)"
+              @click="toggleFavorite(currentSong)"
+            ></i>
           </div>
         </div>
       </div>
@@ -44,6 +47,7 @@
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import useModel from './use-mode'
+import useFavorite from './use-favorite'
 
 export default defineComponent({
   name: 'Player',
@@ -79,6 +83,7 @@ export default defineComponent({
 
     // hooks
     const { modeIcon, changeMode } = useModel()
+    const { getFavorite, toggleFavorite } = useFavorite()
 
     // watch
     watch(playing, (val) => {
@@ -186,7 +191,10 @@ export default defineComponent({
       goBack,
       // mode
       modeIcon,
-      changeMode
+      changeMode,
+      // favorite
+      getFavorite,
+      toggleFavorite
     }
   }
 })
