@@ -12,6 +12,15 @@
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
       <div class="bottom">
+        <div class="progress-wrapper">
+          <span class="time time-l">{{ formatTime(currentTime) }}</span>
+          <div class="progress-bar-wrapper">
+            <progress-bar ref="barRef" :progress="progress"></progress-bar>
+          </div>
+          <span class="time time-r">{{
+            formatTime(currentSong.duration)
+          }}</span>
+        </div>
         <div class="operators">
           <div class="icon i-left">
             <i @click="changeMode" :class="modeIcon"></i>
@@ -39,6 +48,7 @@
       @pause="pause"
       @canplay="canplay"
       @error="error"
+      @timeupdate="timeupdate"
     ></audio>
   </div>
 </template>
@@ -46,15 +56,21 @@
 <script lang='ts'>
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useStore } from 'vuex'
+import { formatTime } from '@/assets/js/utils'
 import useModel from './use-mode'
 import useFavorite from './use-favorite'
+import ProgressBar from './progress-bar.vue'
 
 export default defineComponent({
   name: 'Player',
+  components: {
+    ProgressBar
+  },
   setup () {
     const store = useStore()
     const audioRef = ref(null)
     const songReady = ref(false)
+    const currentTime = ref(0)
 
     // vuex
     const currentSong = computed(() => {
@@ -80,6 +96,9 @@ export default defineComponent({
     const disableCls = computed(() => {
       return songReady.value ? '' : 'disable'
     })
+    const progress = computed(() => {
+      return (currentTime.value / currentSong.value.duration) * 100
+    })
 
     // hooks
     const { modeIcon, changeMode } = useModel()
@@ -98,6 +117,7 @@ export default defineComponent({
       if (!newSong.id || !newSong.url) {
         return
       }
+      currentTime.value = 0
       songReady.value = false
       const audio = audioRef.value
       audio.src = newSong.url
@@ -114,6 +134,11 @@ export default defineComponent({
 
     const pause = () => {
       store.commit('setPlayingState', false)
+    }
+
+    const timeupdate = (e) => {
+      // e.timeStamp 返回系统启动至今的毫秒数
+      currentTime.value = e.target.currentTime // 这才是歌曲当前时间
     }
 
     const preve = () => {
@@ -177,18 +202,22 @@ export default defineComponent({
       audio.play()
     }
     return {
+      currentTime,
       currentSong,
       fullScreen,
       audioRef,
       playIcon,
+      progress,
       disableCls,
       togglePlay,
       pause,
+      timeupdate,
       preve,
       next,
       canplay,
       error,
       goBack,
+      formatTime,
       // mode
       modeIcon,
       changeMode,
@@ -260,6 +289,29 @@ export default defineComponent({
     position: absolute;
     bottom: 50px;
     width: 100%;
+    .progress-wrapper {
+      display: flex;
+      align-items: center;
+      width: 80%;
+      margin: 0px auto;
+      padding: 10px 0;
+      .time {
+        color: $color-text;
+        font-size: $font-size-small;
+        flex: 0 0 40px;
+        line-height: 30px;
+        width: 40px;
+        &.time-l {
+          text-align: left;
+        }
+        &.time-r {
+          text-align: right;
+        }
+      }
+      .progress-bar-wrapper {
+        flex: 1;
+      }
+    }
     .operators {
       display: flex;
       align-items: center;
