@@ -15,7 +15,12 @@
         <div class="progress-wrapper">
           <span class="time time-l">{{ formatTime(currentTime) }}</span>
           <div class="progress-bar-wrapper">
-            <progress-bar ref="barRef" :progress="progress"></progress-bar>
+            <progress-bar
+              ref="barRef"
+              :progress="progress"
+              @progress-changing="onProgressChanging"
+              @progress-changed="onProgressChaned"
+            ></progress-bar>
           </div>
           <span class="time time-r">{{
             formatTime(currentSong.duration)
@@ -46,6 +51,7 @@
     <audio
       ref="audioRef"
       @pause="pause"
+      @ended="end"
       @canplay="canplay"
       @error="error"
       @timeupdate="timeupdate"
@@ -57,6 +63,7 @@
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { formatTime } from '@/assets/js/utils'
+import { PLAY_MODE } from '@/assets/js/constant'
 import useModel from './use-mode'
 import useFavorite from './use-favorite'
 import ProgressBar from './progress-bar.vue'
@@ -67,6 +74,7 @@ export default defineComponent({
     ProgressBar
   },
   setup () {
+    let lock = false // 播放时拖动锁
     const store = useStore()
     const audioRef = ref(null)
     const songReady = ref(false)
@@ -87,6 +95,9 @@ export default defineComponent({
     })
     const palyList = computed(() => {
       return store.state.playList
+    })
+    const playMode = computed(() => {
+      return store.state.playMode
     })
 
     // computed
@@ -125,6 +136,20 @@ export default defineComponent({
     })
 
     // methods
+    const onProgressChanging = (progress) => {
+      lock = true
+      currentTime.value = (progress / 100) * audioRef.value.duration
+    }
+
+    const onProgressChaned = (progress) => {
+      lock = false
+      audioRef.value.currentTime = currentTime.value =
+        (progress / 100) * audioRef.value.duration
+      if (!playing.value) {
+        store.commit('setPlayingState', true)
+      }
+    }
+
     const togglePlay = () => {
       if (!songReady.value) {
         return
@@ -132,12 +157,11 @@ export default defineComponent({
       store.commit('setPlayingState', !playing.value)
     }
 
-    const pause = () => {
-      store.commit('setPlayingState', false)
-    }
-
     const timeupdate = (e) => {
       // e.timeStamp 返回系统启动至今的毫秒数
+      if (lock) {
+        return
+      }
       currentTime.value = e.target.currentTime // 这才是歌曲当前时间
     }
 
@@ -188,6 +212,19 @@ export default defineComponent({
       songReady.value = true
     }
 
+    const pause = () => {
+      store.commit('setPlayingState', false)
+    }
+
+    const end = () => {
+      // 触发ended事件的时候会提前触发一次pause 所以注意loop中的playState切换
+      if (playMode.value === PLAY_MODE.loop) {
+        loop()
+      } else {
+        next()
+      }
+    }
+
     const error = () => {
       songReady.value = true
     }
@@ -200,6 +237,7 @@ export default defineComponent({
       const audio = audioRef.value
       audio.currentTime = 0
       audio.play()
+      store.commit('setPlayingState', true)
     }
     return {
       currentTime,
@@ -216,8 +254,11 @@ export default defineComponent({
       next,
       canplay,
       error,
+      end,
       goBack,
       formatTime,
+      onProgressChanging,
+      onProgressChaned,
       // mode
       modeIcon,
       changeMode,
