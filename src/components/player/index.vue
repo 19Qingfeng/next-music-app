@@ -68,17 +68,18 @@
   </div>
 </template>
 
-<script lang='ts'>
-import { computed, defineComponent, ref, watch } from 'vue'
+<script>
+import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { formatTime } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constant'
 import useModel from './use-mode'
 import useCd from './use-cd'
 import useFavorite from './use-favorite'
+import useLyric from './use-lyric'
 import ProgressBar from './progress-bar.vue'
 
-export default defineComponent({
+export default {
   name: 'Player',
   components: {
     ProgressBar
@@ -125,6 +126,7 @@ export default defineComponent({
     const { modeIcon, changeMode } = useModel()
     const { cdCls, cdRef, cdImageRef } = useCd()
     const { getFavorite, toggleFavorite } = useFavorite()
+    useLyric()
 
     // watch
     watch(playing, (val) => {
@@ -282,7 +284,7 @@ export default defineComponent({
       cdCls
     }
   }
-})
+}
 </script>
 <style lang="scss" scoped>
 .player {
