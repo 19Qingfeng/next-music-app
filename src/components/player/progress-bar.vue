@@ -85,7 +85,7 @@ export default {
       const width = pageX - left
       const progressWidth = this.$el.clientWidth - barWidth
       this.progressWidth = Math.max(0, Math.min(width, progressWidth))
-      const progress = this.progressWidth / progressWidth
+      const progress = this.progressWidth / progressWidth * 100
       this.$emit('progress-changed', progress)
     }
   }
