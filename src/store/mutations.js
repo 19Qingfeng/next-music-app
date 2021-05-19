@@ -21,7 +21,7 @@ const mutations = {
     state.favoriteList = list
   },
   setSongLyric (state, { song, lyric }) {
-    const currentSong = state.playList.find(i => i.mid === song.mid)
+    const currentSong = state.sequenceList.find(i => i.mid === song.mid)
     currentSong.lyric = lyric
   }
 }

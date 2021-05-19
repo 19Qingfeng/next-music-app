@@ -12,13 +12,28 @@
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
       <div class="middle">
-        <div class="middle-l">
+        <div class="middle-l" v-show="false">
           <div class="cd-wrapper">
             <div class="cd" ref="cdRef">
               <img ref="cdImageRef" :class="cdCls" :src="currentSong.pic" />
             </div>
           </div>
         </div>
+
+        <scroll class="middle-r" ref="lyricScrollRef">
+          <div class="lyric-wrapper" v-if="currentLyric">
+            <div ref="lyricListRef">
+              <p
+                class="text"
+                :class="{ current: currentLineNum === index }"
+                v-for="(line, index) in currentLyric.lines"
+                :key="line.num"
+              >
+                {{ line.txt }}
+              </p>
+            </div>
+          </div>
+        </scroll>
       </div>
       <div class="bottom">
         <div class="progress-wrapper">
@@ -78,10 +93,12 @@ import useCd from './use-cd'
 import useFavorite from './use-favorite'
 import useLyric from './use-lyric'
 import ProgressBar from './progress-bar.vue'
+import Scroll from '../base/scroll'
 
 export default {
   name: 'Player',
   components: {
+    Scroll,
     ProgressBar
   },
   setup () {
@@ -126,7 +143,7 @@ export default {
     const { modeIcon, changeMode } = useModel()
     const { cdCls, cdRef, cdImageRef } = useCd()
     const { getFavorite, toggleFavorite } = useFavorite()
-    useLyric()
+    const { currentLyric, currentLineNum } = useLyric()
 
     // watch
     watch(playing, (val) => {
@@ -281,7 +298,10 @@ export default {
       getFavorite,
       toggleFavorite,
       // cd
-      cdCls
+      cdCls,
+      // lyric
+      currentLyric,
+      currentLineNum
     }
   }
 }
@@ -380,6 +400,29 @@ export default {
           }
           .playing {
             animation: rotate 20s linear infinite;
+          }
+        }
+      }
+    }
+    .middle-r {
+      // dev start
+      // dev over
+      display: inline-block;
+      vertical-align: top;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      .lyric-wrapper {
+        width: 80%;
+        margin: 0 auto;
+        overflow: hidden;
+        text-align: center;
+        .text {
+          line-height: 32px;
+          color: $color-text-l;
+          font-size: $font-size-medium;
+          &.current {
+            color: $color-text;
           }
         }
       }
