@@ -21,8 +21,8 @@
         </div>
 
         <scroll class="middle-r" ref="lyricScrollRef">
-          <div class="lyric-wrapper" v-if="currentLyric">
-            <div ref="lyricListRef">
+          <div class="lyric-wrapper">
+            <div ref="lyricListRef" v-if="currentLyric">
               <p
                 class="text"
                 :class="{ current: currentLineNum === index }"
@@ -93,7 +93,7 @@ import useCd from './use-cd'
 import useFavorite from './use-favorite'
 import useLyric from './use-lyric'
 import ProgressBar from './progress-bar.vue'
-import Scroll from '../base/scroll'
+import Scroll from '../base/scroll/index.vue'
 
 export default {
   name: 'Player',
@@ -143,7 +143,10 @@ export default {
     const { modeIcon, changeMode } = useModel()
     const { cdCls, cdRef, cdImageRef } = useCd()
     const { getFavorite, toggleFavorite } = useFavorite()
-    const { currentLyric, currentLineNum } = useLyric()
+    const {
+      currentLyric, currentLineNum, lyricScrollRef,
+      lyricListRef, playLyric, stopLyric
+    } = useLyric(songReady, currentTime)
 
     // watch
     watch(playing, (val) => {
@@ -151,7 +154,13 @@ export default {
       if (!songReady.value) {
         return
       }
-      val ? audio.play() : audio.pause()
+      if (val) {
+        audio.play()
+        playLyric()
+      } else {
+        audio.pause()
+        stopLyric()
+      }
     })
 
     watch(currentSong, (newSong) => {
@@ -169,12 +178,16 @@ export default {
     const onProgressChanging = (progress) => {
       lock = true
       currentTime.value = (progress / 100) * audioRef.value.duration
+      // currentTime变化后切换到对应的位置歌词 然后在暂停
+      playLyric()
+      stopLyric()
     }
 
     const onProgressChaned = (progress) => {
       lock = false
       audioRef.value.currentTime = currentTime.value =
         (progress / 100) * audioRef.value.duration
+      playLyric()
       if (!playing.value) {
         store.commit('setPlayingState', true)
       }
@@ -240,6 +253,7 @@ export default {
         return
       }
       songReady.value = true
+      playLyric()
     }
 
     const pause = () => {
@@ -300,6 +314,8 @@ export default {
       // cd
       cdCls,
       // lyric
+      lyricScrollRef,
+      lyricListRef,
       currentLyric,
       currentLineNum
     }
@@ -405,8 +421,6 @@ export default {
       }
     }
     .middle-r {
-      // dev start
-      // dev over
       display: inline-block;
       vertical-align: top;
       width: 100%;
