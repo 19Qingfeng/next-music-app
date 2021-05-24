@@ -12,14 +12,16 @@
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
       <div class="middle">
-        <div class="middle-l" v-show="false">
+        <div class="middle-l" v-show="true">
           <div class="cd-wrapper">
             <div class="cd" ref="cdRef">
               <img ref="cdImageRef" :class="cdCls" :src="currentSong.pic" />
             </div>
           </div>
+          <div class="playing-lyric-wrapper">
+            <p class="playing-lyric">{{ playingLyric }}</p>
+          </div>
         </div>
-
         <scroll class="middle-r" ref="lyricScrollRef">
           <div class="lyric-wrapper">
             <div ref="lyricListRef" v-if="currentLyric">
@@ -31,6 +33,9 @@
               >
                 {{ line.txt }}
               </p>
+            </div>
+            <div class="pure-music" v-show="pureMusicLyric">
+              <p>{{ pureMusicLyric }}</p>
             </div>
           </div>
         </scroll>
@@ -144,7 +149,7 @@ export default {
     const { cdCls, cdRef, cdImageRef } = useCd()
     const { getFavorite, toggleFavorite } = useFavorite()
     const {
-      currentLyric, currentLineNum, lyricScrollRef,
+      currentLyric, currentLineNum, pureMusicLyric, playingLyric, lyricScrollRef,
       lyricListRef, playLyric, stopLyric
     } = useLyric(songReady, currentTime)
 
@@ -316,6 +321,8 @@ export default {
       // lyric
       lyricScrollRef,
       lyricListRef,
+      pureMusicLyric,
+      playingLyric,
       currentLyric,
       currentLineNum
     }
@@ -419,6 +426,18 @@ export default {
           }
         }
       }
+      .playing-lyric-wrapper {
+        width: 80%;
+        margin: 30px auto 0 auto;
+        overflow: hidden;
+        text-align: center;
+        .playing-lyric {
+          height: 20px;
+          line-height: 20px;
+          font-size: $font-size-medium;
+          color: $color-text-l;
+        }
+      }
     }
     .middle-r {
       display: inline-block;
@@ -438,6 +457,12 @@ export default {
           &.current {
             color: $color-text;
           }
+        }
+        .pure-music {
+          padding-top: 50%;
+          line-height: 32px;
+          color: $color-text-l;
+          font-size: $font-size-medium;
         }
       }
     }

@@ -7,6 +7,8 @@ export default function useLyric (songReady, currentTime) {
   const store = useStore()
   const currentLyric = ref(null)
   const currentLineNum = ref(0)
+  const pureMusicLyric = ref('')
+  const playingLyric = ref('')
   const lyricScrollRef = ref(null)
   const lyricListRef = ref(null)
 
@@ -22,6 +24,8 @@ export default function useLyric (songReady, currentTime) {
     }
     stopLyric()
     currentLyric.value = null
+    pureMusicLyric.value = ''
+    playingLyric.value = ''
     currentLineNum.value = 0
     const lyric = await getLyric(song)
     store.commit('setSongLyric', {
@@ -33,8 +37,15 @@ export default function useLyric (songReady, currentTime) {
     }
     // 只有最新当前歌词才会进入下面逻辑（页面渲染最新)
     currentLyric.value = new Lyric(lyric, handleLyric)
-    if (songReady.value) {
-      playLyric()
+    if (currentLyric.value.lines.length > 0) {
+      if (songReady.value) {
+        playLyric()
+      }
+    } else {
+      playingLyric.value = pureMusicLyric.value = lyric.replace(
+        /\[(\d{2}):(\d{2}):(\d{2})\]/g,
+        ''
+      )
     }
   })
 
@@ -51,8 +62,9 @@ export default function useLyric (songReady, currentTime) {
     }
   }
 
-  function handleLyric ({ lineNum }) {
+  function handleLyric ({ lineNum, txt }) {
     currentLineNum.value = lineNum
+    playingLyric.value = txt
     const scrollCmp = lyricScrollRef.value
     const listEl = lyricListRef.value
     if (!listEl) {
@@ -69,6 +81,8 @@ export default function useLyric (songReady, currentTime) {
   return {
     currentLyric,
     currentLineNum,
+    pureMusicLyric,
+    playingLyric,
     lyricScrollRef,
     lyricListRef,
     playLyric,
