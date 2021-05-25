@@ -11,8 +11,13 @@
         <h1 class="title">{{ currentSong.name }}</h1>
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
-      <div class="middle">
-        <div class="middle-l" v-show="true">
+      <div
+        class="middle"
+        @touchstart.prevent="onTouchStart"
+        @touchmove.prevent="onTouchMove"
+        @touchend.prevent="onTouchEnd"
+      >
+        <div class="middle-l" v-show="true" :style="middleLStyle">
           <div class="cd-wrapper">
             <div class="cd" ref="cdRef">
               <img ref="cdImageRef" :class="cdCls" :src="currentSong.pic" />
@@ -22,7 +27,7 @@
             <p class="playing-lyric">{{ playingLyric }}</p>
           </div>
         </div>
-        <scroll class="middle-r" ref="lyricScrollRef">
+        <scroll class="middle-r" ref="lyricScrollRef" :style="middleRStyle">
           <div class="lyric-wrapper">
             <div ref="lyricListRef" v-if="currentLyric">
               <p
@@ -41,6 +46,10 @@
         </scroll>
       </div>
       <div class="bottom">
+        <div class="dot-wrapper">
+          <span class="dot" :class="{ active: currentShow === 'cd' }"></span>
+          <span class="dot" :class="{ active: currentShow === 'lyric' }"></span>
+        </div>
         <div class="progress-wrapper">
           <span class="time time-l">{{ formatTime(currentTime) }}</span>
           <div class="progress-bar-wrapper">
@@ -97,6 +106,7 @@ import useModel from './use-mode'
 import useCd from './use-cd'
 import useFavorite from './use-favorite'
 import useLyric from './use-lyric'
+import useMiddleInteractive from './use-middle-interactive'
 import ProgressBar from './progress-bar.vue'
 import Scroll from '../base/scroll/index.vue'
 
@@ -152,6 +162,11 @@ export default {
       currentLyric, currentLineNum, pureMusicLyric, playingLyric, lyricScrollRef,
       lyricListRef, playLyric, stopLyric
     } = useLyric(songReady, currentTime)
+    const {
+      currentShow, middleLStyle, middleRStyle, onTouchStart,
+      onTouchMove,
+      onTouchEnd
+    } = useMiddleInteractive()
 
     // watch
     watch(playing, (val) => {
@@ -324,7 +339,14 @@ export default {
       pureMusicLyric,
       playingLyric,
       currentLyric,
-      currentLineNum
+      currentLineNum,
+      // middleInteractive
+      currentShow,
+      middleLStyle,
+      middleRStyle,
+      onTouchStart,
+      onTouchMove,
+      onTouchEnd
     }
   }
 }
@@ -471,6 +493,24 @@ export default {
     position: absolute;
     bottom: 50px;
     width: 100%;
+    .dot-wrapper {
+      text-align: center;
+      font-size: 0;
+      .dot {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0 4px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: $color-text-l;
+        &.active {
+          width: 20px;
+          border-radius: 5px;
+          background: $color-text-ll;
+        }
+      }
+    }
     .progress-wrapper {
       display: flex;
       align-items: center;
