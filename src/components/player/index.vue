@@ -166,7 +166,7 @@ export default {
       currentShow, middleLStyle, middleRStyle, onTouchStart,
       onTouchMove,
       onTouchEnd
-    } = useMiddleInteractive()
+    } = useMiddleInteractive(currentSong)
 
     // watch
     watch(playing, (val) => {

@@ -1,12 +1,30 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
-export default function useMiddleInteractive () {
+export default function useMiddleInteractive (currentSong) {
   const currentShow = ref('cd')
   const middleLStyle = ref('')
   const middleRStyle = ref('')
 
   const touch = {}
   let currentView = 'cd'
+
+  watch(currentSong, () => {
+    resetCurrentShow()
+  })
+
+  function resetCurrentShow () {
+    currentView = 'cd'
+    currentShow.value = 'cd'
+    middleLStyle.value = {
+      opacity: 1,
+      transitionDuration: '0ms'
+    }
+
+    middleRStyle.value = {
+      transform: 'translate3d(0,0,0)',
+      transitionDuration: '0ms'
+    }
+  }
 
   function onTouchStart (e) {
     const startX = e.touches[0].pageX
