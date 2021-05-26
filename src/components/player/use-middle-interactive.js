@@ -28,11 +28,30 @@ export default function useMiddleInteractive (currentSong) {
 
   function onTouchStart (e) {
     const startX = e.touches[0].pageX
+    const startY = e.touches[0].pageY
     touch.startX = startX
+    touch.startY = startY
+    touch.lockDirection = ''
   }
 
   function onTouchMove (e) {
     const deltaX = e.touches[0].pageX - touch.startX
+    const deltaY = e.touches[0].pageY - touch.startY
+
+    const absDeltaX = Math.abs(deltaX)
+    const absDeltaY = Math.abs(deltaY)
+    console.log(absDeltaX, 'absDeltaX')
+    console.log(absDeltaY, 'deltaY')
+
+    // 第一次就会决定 然后本次滚动就会锁住了 直到重新touchStart才会开锁
+    if (!touch.lockDirection) {
+      touch.lockDirection = absDeltaX >= absDeltaY ? 'h' : 'v'
+    }
+
+    if (touch.lockDirection === 'v') {
+      return
+    }
+
     const left = currentView === 'cd' ? 0 : -window.innerWidth
     const offset = Math.min(0, Math.max(-window.innerWidth, deltaX + left))
     const percent = Math.abs(offset / window.innerWidth)
