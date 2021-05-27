@@ -40,8 +40,6 @@ export default function useMiddleInteractive (currentSong) {
 
     const absDeltaX = Math.abs(deltaX)
     const absDeltaY = Math.abs(deltaY)
-    console.log(absDeltaX, 'absDeltaX')
-    console.log(absDeltaY, 'deltaY')
 
     // 第一次就会决定 然后本次滚动就会锁住了 直到重新touchStart才会开锁
     if (!touch.lockDirection) {
