@@ -12,9 +12,14 @@
           />
         </div>
       </div>
-      <div>
+      <div class="slide-wrapper">
         <h2 class="name">{{ currentSong.name }}</h2>
         <p class="desc">{{ currentSong.singer }}</p>
+      </div>
+      <div class="control">
+        <progress-circle :radius="32" :progress="progress">
+          <i class="icon-mini icon-pause-mini"></i>
+        </progress-circle>
       </div>
     </div>
   </transition>
@@ -23,9 +28,16 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import useCd from './use-cd'
+import ProgressCircle from './progress-circle'
 
 export default {
   name: 'MiniPlayer',
+  components: {
+    ProgressCircle
+  },
+  props: {
+    progress: Number
+  },
   setup () {
     const store = useStore()
 
@@ -86,16 +98,37 @@ export default {
       }
     }
   }
-  .name {
-    margin-bottom: 2px;
-    @include no-wrap();
-    font-size: $font-size-medium;
-    color: $color-text;
+  .slide-wrapper {
+    flex: 1;
+    .name {
+      margin-bottom: 2px;
+      @include no-wrap();
+      font-size: $font-size-medium;
+      color: $color-text;
+    }
+    .desc {
+      @include no-wrap();
+      font-size: $font-size-small;
+      color: $color-text-d;
+    }
   }
-  .desc {
-    @include no-wrap();
-    font-size: $font-size-small;
-    color: $color-text-d;
+  .control {
+    flex: 0 0 30px;
+    width: 30px;
+    padding: 0 10px;
+    .icon-playlist {
+      position: relative;
+      top: -2px;
+      font-size: 28px;
+      color: $color-theme-d;
+    }
+    .icon-mini {
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: $color-theme-d;
+      font-size: 32px;
+    }
   }
   &.mini-enter-active,
   &.mini-leave-active {

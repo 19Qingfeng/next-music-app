@@ -87,7 +87,7 @@
       </div>
     </div>
 
-    <mini-player />
+    <mini-player :progress="progress" />
 
     <audio
       ref="audioRef"
