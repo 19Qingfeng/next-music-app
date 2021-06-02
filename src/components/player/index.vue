@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { formatTime } from '@/assets/js/utils'
 import { PLAY_MODE } from '@/assets/js/constant'
@@ -125,6 +125,7 @@ export default {
     let lock = false // 播放时拖动锁
     const store = useStore()
     const audioRef = ref(null)
+    const barRef = ref(null)
     const songReady = ref(false)
     const currentTime = ref(0)
 
@@ -185,6 +186,15 @@ export default {
       } else {
         audio.pause()
         stopLyric()
+      }
+    })
+
+    watch(fullScreen, async (newFullScreen) => {
+      if (newFullScreen) {
+        await nextTick()
+        // 等待fullScreen变化后 v-show从false变化为true的时候确保Dom更新后
+        // 在进行computedProcess进行操作/获取DOM信息
+        barRef.value.computedProcess()
       }
     })
 
@@ -314,6 +324,7 @@ export default {
       fullScreen,
       playList,
       audioRef,
+      barRef,
       cdRef,
       cdImageRef,
       playIcon,

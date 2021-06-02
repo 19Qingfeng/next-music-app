@@ -18,7 +18,11 @@
       </div>
       <div class="control">
         <progress-circle :radius="32" :progress="progress">
-          <i class="icon-mini icon-pause-mini"></i>
+          <i
+            class="icon-mini"
+            :class="miniPlayIcon"
+            @click.stop="togglePlay"
+          ></i>
         </progress-circle>
       </div>
     </div>
@@ -47,6 +51,12 @@ export default {
     const fullScreen = computed(() => {
       return store.state.fullScreen
     })
+    const playing = computed(() => {
+      return store.state.playing
+    })
+    const miniPlayIcon = computed(() => {
+      return playing.value ? 'icon-pause-mini' : 'icon-play-mini'
+    })
 
     const {
       cdRef,
@@ -57,13 +67,19 @@ export default {
     function showNormalPlayer () {
       store.commit('setFullScreen', true)
     }
+
+    function togglePlay () {
+      store.commit('setPlayingState', !playing.value)
+    }
     return {
       currentSong,
       fullScreen,
+      miniPlayIcon,
       cdRef,
       cdImageRef,
       cdCls,
-      showNormalPlayer
+      showNormalPlayer,
+      togglePlay
     }
   }
 }
