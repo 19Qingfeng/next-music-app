@@ -5,7 +5,7 @@ import { useStore } from 'vuex'
 
 BScroll.use(Slide)
 
-export default function useMiniSlide () {
+export default function useMiniSlide() {
   const sliderRef = ref(null)
   const slide = ref(null)
   const store = useStore()
@@ -35,7 +35,8 @@ export default function useMiniSlide () {
             },
             momentum: false,
             bounce: false,
-            stopPropagation: true
+            stopPropagation: true,
+            click: true
           })
         } else {
           // 重新计算 BetterScroll，当 DOM 结构发生变化的时候务必要调用确保滚动的效果正常。
