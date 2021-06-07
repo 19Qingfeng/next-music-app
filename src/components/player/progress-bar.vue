@@ -9,7 +9,7 @@
         @touchend.prevent="touchend"
         :style="btnStyle"
       >
-        <!-- 坑死我了，注意事件冒泡。否则会超出。touchstart.prevent不触发click事件 -->
+        <!-- 坑死我了，注意事件冒泡。否则会超出。touchs事件.prevent会阻止点击事件，从而不会冒泡。不触发click事件 -->
         <div class="progress-btn"></div>
       </div>
     </div>
@@ -80,6 +80,7 @@ export default {
       this.$emit('progress-changed', progress)
     },
     click (e) {
+      console.log('点击')
       const pageX = e.pageX
       const left = this.$el.getBoundingClientRect().left
       const width = pageX - left
