@@ -16,32 +16,57 @@ export default function useMiniSlide() {
   const playList = computed(() => {
     return store.state.playList
   })
-  const isShowSlider = computed(() => {
-    return fullScreen.value && !!playList.value.length
+  const currentIndex = computed(() => {
+    return store.state.currentIndex
   })
+  const isShowSlider = computed(() => {
+    return !fullScreen.value && !!playList.value.length
+  })
+
+  // 滑动切换slider
+  function slidePageChanged({ pageX }) {
+    store.commit('setCurrentIndex', pageX)
+  }
 
   onMounted(() => {
     let slideVal
     watch(isShowSlider, async isShow => {
-      await nextTick()
       if (isShow) {
+        await nextTick()
         if (!slideVal) {
           // 初始化参数不对 需要调整
           slideVal = slide.value = new BScroll(sliderRef.value, {
             scrollX: true,
             scrollY: false,
             slide: {
-              autoplay: false
+              autoplay: false,
+              loop: true
             },
             momentum: false,
             bounce: false,
             stopPropagation: true,
             click: true
           })
+          slideVal.on('slidePageChanged', slidePageChanged)
         } else {
-          // 重新计算 BetterScroll，当 DOM 结构发生变化的时候务必要调用确保滚动的效果正常。
           slideVal.refresh()
         }
+        slideVal.goToPage(currentIndex.value, 0, 0)
+      }
+    })
+
+    // 歌曲自动完成
+    watch(currentIndex, newIndex => {
+      if (slideVal && isShowSlider.value) {
+        slideVal.goToPage(newIndex, 0, 0)
+      }
+    })
+
+    // playList改变
+    watch(playList, async newList => {
+      if (slideVal && isShowSlider.value) {
+        await nextTick()
+        slideVal.refresh()
       }
     })
   })

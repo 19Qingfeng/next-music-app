@@ -1,7 +1,7 @@
 import { PLAY_MODE } from '@/assets/js/constant.js'
 import { shuffle } from '@/utils/index'
 
-export function selectPlay ({ commit }, { list, index }) {
+export function selectPlay({ commit }, { list, index }) {
   commit('setPlayingState', true)
   commit('setSequenceList', list)
   commit('setPlayList', list)
@@ -10,7 +10,7 @@ export function selectPlay ({ commit }, { list, index }) {
   commit('setFullScreen', true)
 }
 
-export function randomPlay ({ commit }, list) {
+export function randomPlay({ commit }, list) {
   commit('setPlayingState', true)
   commit('setSequenceList', list)
   commit('setPlayList', shuffle(list))
@@ -19,7 +19,7 @@ export function randomPlay ({ commit }, list) {
   commit('setFullScreen', true)
 }
 
-export function changeMode ({ commit, state, getters }, mode) {
+export function changeMode({ commit, state, getters }, mode) {
   const currentId = getters.currentSong.id
   if (mode === PLAY_MODE.random) {
     commit('setPlayList', shuffle(state.sequenceList))

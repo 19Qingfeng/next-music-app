@@ -20,12 +20,13 @@ export default {
     }
   },
   emits: ['onScroll'],
-  setup (props, ctx) {
+  setup(props, ctx) {
     const rootRef = ref(null)
-    const { bs } = useScroll(rootRef, props, ctx)
+    const { bs, refreshScroll } = useScroll(rootRef, props, ctx)
     return {
       rootRef,
-      bs
+      bs,
+      refreshScroll
     }
   }
 }
