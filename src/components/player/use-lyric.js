@@ -23,11 +23,14 @@ export default function useLyric (songReady, currentTime) {
       return
     }
     stopLyric()
+    console.log(song, 'song')
     currentLyric.value = null
     pureMusicLyric.value = ''
     playingLyric.value = ''
     currentLineNum.value = 0
     const lyric = await getLyric(song)
+    console.log(song, 'song')
+
     store.commit('setSongLyric', {
       lyric,
       song

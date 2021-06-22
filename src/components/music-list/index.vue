@@ -30,7 +30,7 @@
 <script>
 import Scroll from '../base/scroll'
 import SongList from '../base/song-list'
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 const RESERVED_HEIGHT = 40
 export default {
@@ -65,10 +65,11 @@ export default {
     SongList
   },
   computed: {
-    isEmpty () {
+    ...mapState(['playList']),
+    isEmpty() {
       return !this.loading && this.songs && this.songs.length === 0
     },
-    bgStyle () {
+    bgStyle() {
       const scrollY = this.scrollY
       let zIndex = 0
       let paddingTop = '70%'
@@ -94,12 +95,14 @@ export default {
         transform: `scale(${scale})translateZ(${translateZ}px)`
       }
     },
-    srollStyle () {
+    srollStyle() {
+      const bottom = this.playList.length ? '60px' : 0
       return {
-        top: this.imageHeight + 'px'
+        top: this.imageHeight + 'px',
+        bottom
       }
     },
-    playStyle () {
+    playStyle() {
       let display = ''
       if (this.scrollY > this.maxTranslateY) {
         display = 'none'
@@ -108,7 +111,7 @@ export default {
         display
       }
     },
-    filterStyle () {
+    filterStyle() {
       let filter = 0
       const scrollY = this.scrollY
       const imageHeight = this.imageHeight
@@ -122,23 +125,23 @@ export default {
   },
   methods: {
     ...mapActions(['selectPlay', 'randomPlay']),
-    goBack () {
+    goBack() {
       this.$router.back()
     },
-    onScroll ({ y }) {
+    onScroll({ y }) {
       this.scrollY = -y
     },
-    selectItem ({ song, index }) {
+    selectItem({ song, index }) {
       this.selectPlay({
         list: this.songs,
         index
       })
     },
-    random () {
+    random() {
       this.randomPlay(this.songs)
     }
   },
-  mounted () {
+  mounted() {
     this.imageHeight = this.$refs.bgImage.clientHeight
     this.maxTranslateY = this.imageHeight - RESERVED_HEIGHT
   }

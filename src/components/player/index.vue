@@ -226,6 +226,7 @@ export default {
       const audio = audioRef.value
       audio.src = newSong.url
       audio.play()
+      store.commit('setPlayingState', true)
     })
 
     // methods
@@ -276,9 +277,6 @@ export default {
           currentIndex = list.length - 1
         }
         store.commit('setCurrentIndex', currentIndex)
-        if (!playing.value) {
-          store.commit('setPlayingState', true)
-        }
       }
     }
 
@@ -296,9 +294,6 @@ export default {
           currentIndex = 0
         }
         store.commit('setCurrentIndex', currentIndex)
-        if (!playing.value) {
-          store.commit('setPlayingState', true)
-        }
       }
     }
 

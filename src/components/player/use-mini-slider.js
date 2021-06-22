@@ -64,7 +64,8 @@ export default function useMiniSlide() {
 
     // playList改变
     watch(playList, async newList => {
-      if (slideVal && isShowSlider.value) {
+      // 当list长度为0的时候刷新slide(refresh方法)会报错
+      if (slideVal && isShowSlider.value && newList.length) {
         await nextTick()
         slideVal.refresh()
       }

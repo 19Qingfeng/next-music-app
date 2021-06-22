@@ -9,10 +9,13 @@
               <span class="text">
                 {{ modeText }}
               </span>
+              <span class="clear" @click="showConfirm">
+                <i class="icon-clear"></i>
+              </span>
             </h1>
           </div>
           <scroll class="list-content" ref="scrollRef">
-            <ul ref="listRef">
+            <transition-group name="list" tag="ul" ref="listRef">
               <li
                 class="item"
                 v-for="song in sequenceList"
@@ -21,16 +24,29 @@
               >
                 <i class="current" :class="getCurrentIcon(song)"></i>
                 <span class="text">{{ song.name }}</span>
-                <span class="faviorite" @click.stop="toggleFavorite(song)">
+                <span class="favorite" @click.stop="toggleFavorite(song)">
                   <i :class="getFavorite(song)"></i>
                 </span>
+                <span
+                  class="delete"
+                  :class="{ disable: removing }"
+                  @click.stop="removeSong(song)"
+                >
+                  <i class="icon-delete"></i>
+                </span>
               </li>
-            </ul>
+            </transition-group>
           </scroll>
           <div class="list-footer" @click.stop="hide">
             <span>关闭</span>
           </div>
         </div>
+        <confirm
+          ref="confirmRef"
+          text="是否清空播放列表"
+          confirm-btn-text="清空"
+          @confirm="onConfirmClear"
+        />
       </div>
     </transition>
   </teleport>
@@ -38,6 +54,7 @@
 
 <script>
 import Scroll from '@/components/base/scroll'
+import Confirm from '@/components/base/confirm'
 import useModel from './use-mode'
 import useFavorite from './use-favorite'
 import { useStore } from 'vuex'
@@ -45,14 +62,18 @@ import { computed, nextTick, ref, watch } from '@vue/runtime-core'
 export default {
   name: 'PlayList',
   components: {
-    Scroll
+    Scroll,
+    Confirm
   },
   setup() {
     const visible = ref(false)
     const scrollRef = ref(null)
     const listRef = ref(null)
+    const confirmRef = ref(null)
+    const removing = ref(false)
 
     const store = useStore()
+
     const playList = computed(() => store.state.playList)
     const sequenceList = computed(() => store.state.sequenceList)
     const currentSong = computed(() => store.getters.currentSong)
@@ -60,8 +81,9 @@ export default {
     const { modeIcon, modeText, changeMode } = useModel()
     const { getFavorite, toggleFavorite } = useFavorite()
 
-    watch(currentSong, () => {
-      if (visible.value) {
+    watch(currentSong, async (newSong) => {
+      if (visible.value && newSong?.id) {
+        await nextTick()
         scrollToCurrentSong()
       }
     })
@@ -81,13 +103,27 @@ export default {
     function scrollToCurrentSong() {
       const sequenceListVal = sequenceList.value
       const scrollEl = scrollRef.value
-      const listEl = listRef.value
+      const listEl = listRef.value.$el
       const index = sequenceListVal.findIndex(song => song.id === currentSong.value.id)
       if (index === -1) {
         return
       }
       const el = listEl.children[index]
       scrollEl.bs.scrollToElement(el, 1000)
+    }
+
+    function removeSong(song) {
+      if (removing.value) {
+        return
+      }
+      removing.value = true
+      store.dispatch('removeSong', song)
+      if (playList.value.length === 0) {
+        hide()
+      }
+      setTimeout(() => {
+        removing.value = false
+      }, 300)
     }
 
     async function show() {
@@ -100,9 +136,21 @@ export default {
     function hide() {
       visible.value = false
     }
+
+    function showConfirm() {
+      confirmRef.value.show()
+    }
+
+    function onConfirmClear() {
+      store.dispatch('clearSongList')
+      hide()
+    }
+
     return {
+      removing,
       visible,
       scrollRef,
+      confirmRef,
       listRef,
       playList,
       sequenceList,
@@ -110,6 +158,9 @@ export default {
       hide,
       show,
       toggleCurrentSong,
+      removeSong,
+      showConfirm,
+      onConfirmClear,
       // icon
       modeText,
       modeIcon,
@@ -180,6 +231,14 @@ export default {
     .list-content {
       max-height: 240px;
       overflow: hidden;
+      .list-enter-active,
+      .list-leave-active {
+        transition: all 0.3s;
+      }
+      .list-enter-from,
+      .list-leave-to {
+        height: 0 !important;
+      }
       .item {
         display: flex;
         align-items: center;

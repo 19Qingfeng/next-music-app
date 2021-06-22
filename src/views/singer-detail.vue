@@ -17,30 +17,31 @@ export default {
       type: Object
     }
   },
-  data () {
+  data() {
     return {
       songs: [],
       loading: false
     }
   },
   computed: {
-    computedSinger () {
+    computedSinger() {
       let ret = null
       const singer = this.singer
       if (singer) {
         ret = singer
-      }
-      const sessionSinger = session.get(SINGER_SESSION)
-      if (sessionSinger.mid === this.$route.params.id) {
-        ret = sessionSinger
+      } else {
+        const sessionSinger = session.get(SINGER_SESSION)
+        if (sessionSinger.mid === this.$route.params.id) {
+          ret = sessionSinger
+        }
       }
       return ret
     },
-    pic () {
+    pic() {
       const singer = this.computedSinger
       return singer && singer.pic
     },
-    name () {
+    name() {
       const singer = this.computedSinger
       return singer && singer.name
     }
@@ -48,7 +49,7 @@ export default {
   components: {
     MusicList
   },
-  async created () {
+  async created() {
     const computedSinger = this.computedSinger
     if (!computedSinger) {
       const path = this.$route.matched[0]
