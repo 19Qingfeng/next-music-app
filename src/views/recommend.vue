@@ -28,7 +28,7 @@
 
 <script>
 import Slide from '../components/base/slide/index.vue'
-import Scroll from '../components/base/scroll/index.vue'
+import Scroll from '../components/wrap-scroll/index'
 import { getRecommend } from '@/service/recommend'
 export default {
   name: 'Recommend',
