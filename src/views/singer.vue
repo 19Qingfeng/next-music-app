@@ -18,7 +18,7 @@ export default {
   components: {
     IndexList
   },
-  data () {
+  data() {
     return {
       singers: [],
       singer: null,
@@ -26,18 +26,18 @@ export default {
     }
   },
   methods: {
-    selectedSinger (singer) {
+    selectedSinger(singer) {
       this.singer = singer
       this.cacheSession(singer)
       this.$router.push({
         path: `/singer/${singer.mid}`
       })
     },
-    cacheSession (singer) {
+    cacheSession(singer) {
       session.set(SINGER_SESSION, singer)
     }
   },
-  async created () {
+  async created() {
     const { singers } = await getSingerList()
     this.singers = singers
   }

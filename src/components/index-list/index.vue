@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import Scroll from '../base/scroll/index.vue'
+import Scroll from '../wrap-scroll/index'
 import useFixed from './use-fixed'
 import useShortcur from './use-shortcut'
 import { ref } from 'vue'
@@ -64,7 +64,7 @@ export default {
     }
   },
   emits: ['selected'],
-  setup (props, { emit }) {
+  setup(props, { emit }) {
     const scrollWrapper = ref(null)
     const { rootRef, fixedTitle, currentIndex, onScroll, transformStyle } = useFixed(props)
     const { shortTitle, onTouchStart, onTouchMove } = useShortcur(props, scrollWrapper, rootRef)

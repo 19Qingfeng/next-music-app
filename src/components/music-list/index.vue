@@ -28,7 +28,7 @@
   </div>
 </template>
 <script>
-import Scroll from '../base/scroll'
+import Scroll from '../wrap-scroll/index'
 import SongList from '../base/song-list'
 import { mapActions, mapState } from 'vuex'
 
