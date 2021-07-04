@@ -1,19 +1,17 @@
 <template>
-  <div class="singer-detail">
+  <div class="recomment-detail">
     <music-list :songs="songs" :pic="pic" :title="name" :loading="loading" />
   </div>
 </template>
-
 <script>
 import createDetailComponent from '@/assets/js/create-detail-component'
-import { getSingerDetail } from '../service/singer'
-import { SINGER_SESSION } from '@/assets/js/constant'
+import { getAlbum } from '../service/recommend/index'
+import { ALBUM_SESSION } from '@/assets/js/constant'
 
-export default createDetailComponent('singer-detail', SINGER_SESSION, getSingerDetail)
-
+export default createDetailComponent('recommend-detail', ALBUM_SESSION, getAlbum)
 </script>
 <style lang="scss" scoped>
-.singer-detail {
+.recomment-detail {
   position: fixed;
   z-index: 10;
   top: 0;
