@@ -36,7 +36,7 @@ export default function createDetailComponent(name, key, fetch) {
       },
       name() {
         const data = this.computedData
-        return data && data.name
+        return data && (data.name || data.title)
       }
     },
     components: {
